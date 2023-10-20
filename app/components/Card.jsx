@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 
 
@@ -9,12 +9,12 @@ export default function Card({ user }) {
 
 
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const id = searchParams.get('id')
 
     const [newfirstname, setnewfirstname] = useState(user.firstname)
     const [newlastname, setnewlastname] = useState(user.lastname)
     const [newemail, setnewemail] = useState(user.email)
-
-    const [update, setupdate] = useState(false)
 
     function handleClick(id) {
         fetch(`/api/users/delete?id=${id}`).then(res => res.json()).then(json => {
@@ -28,14 +28,15 @@ export default function Card({ user }) {
         })
     }
 
-    function handleUpdate() {
-        setupdate(false)
+    async function handleUpdate() {
         user.firstname = newfirstname
         user.lastname = newlastname
         user.email = newemail
+        router.push('/')
     }
 
-    if (update) {
+    if (id == user.id) {
+
         return (
             <div className='grid grid-cols-7 py-3'>
                 <div className='col-span-2 capitalize'>
@@ -66,7 +67,7 @@ export default function Card({ user }) {
             <div className='col-span-2 capitalize'>{user.lastname}</div>
             <div className='col-span-2'>{user.email}</div>
             <div>
-                <button onClick={() => setupdate(true)} className='text-blue-600 me-3'>Update </button>
+                <button onClick={() => router.push(`/?id=${user.id}`)} className='text-blue-600 me-3'>Update </button>
                 <button onClick={() => handleClick(user.id)} className='text-red-600'> Delete</button>
             </div>
         </div>

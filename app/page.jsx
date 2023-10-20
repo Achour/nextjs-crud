@@ -1,5 +1,7 @@
 import Image from 'next/image'
 import Create from './components/Create'
+import Card from './components/Card'
+
 
 async function fetchUsers() {
   const res = await fetch('http://localhost:3000/api/users', { next: { revalidate: 0 } })
@@ -9,7 +11,6 @@ async function fetchUsers() {
 
   return res.json()
 }
-import Card from './components/Card'
 
 export default async function Home() {
 
