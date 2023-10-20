@@ -15,6 +15,7 @@ export default function Card({ user }) {
     const [newfirstname, setnewfirstname] = useState(user.firstname)
     const [newlastname, setnewlastname] = useState(user.lastname)
     const [newemail, setnewemail] = useState(user.email)
+    const [update, setupdate] = useState(false)
 
     function handleClick(id) {
         fetch(`/api/users/delete?id=${id}`).then(res => res.json()).then(json => {
@@ -32,10 +33,30 @@ export default function Card({ user }) {
         user.firstname = newfirstname
         user.lastname = newlastname
         user.email = newemail
-        router.push('/')
+
+        const data = {
+            'id': user.id,
+            'firstname': newfirstname,
+            'lastname': newlastname,
+            'email': newemail
+        }
+        fetch('/api/users', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ data })
+        }).then(res => res.json())
+            .then(json => {
+                console.log(json)
+            })
+
+        setupdate(false)
+
+        //router.push('/', { scroll: false })
     }
 
-    if (id == user.id) {
+    if (id == user.id && update == true) {
 
         return (
             <div className='grid grid-cols-7 py-3'>
@@ -67,7 +88,10 @@ export default function Card({ user }) {
             <div className='col-span-2 capitalize'>{user.lastname}</div>
             <div className='col-span-2'>{user.email}</div>
             <div>
-                <button onClick={() => router.push(`/?id=${user.id}`)} className='text-blue-600 me-3'>Update </button>
+                <button onClick={() => {
+                    setupdate(true)
+                    router.push(`/?id=${user.id}`, { scroll: false })
+                }} className='text-blue-600 me-3'>Update </button>
                 <button onClick={() => handleClick(user.id)} className='text-red-600'> Delete</button>
             </div>
         </div>

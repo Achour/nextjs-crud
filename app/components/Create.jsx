@@ -16,6 +16,7 @@ export default function Create() {
         e.preventDefault()
 
         const data = {
+
             'firstname': firstname,
             'lastname': lastname,
             'email': email

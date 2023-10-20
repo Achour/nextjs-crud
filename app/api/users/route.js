@@ -47,3 +47,19 @@ export async function POST(req) {
     });
   }
 }
+
+export async function PUT(req) {
+  const { data } = await req.json();
+  const updateUser = await prisma.user.update({
+    where: {
+      id: data.id,
+    },
+    data: {
+      firstname: data.firstname,
+      lastname: data.lastname,
+      email: data.email,
+    },
+  });
+
+  return NextResponse.json({ message: updateUser });
+}
