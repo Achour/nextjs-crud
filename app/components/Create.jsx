@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function Create() {
@@ -12,9 +12,19 @@ export default function Create() {
     const [email, setemail] = useState('')
     const [error, seterror] = useState()
 
+    const [loading, setloading] = useState(false);
+
+
+    // useEffect(() => {
+
+    //     console.log('###############')
+
+    // }, [handleSubmit]);
+
     async function handleSubmit(e) {
         e.preventDefault()
 
+        setloading(true)
         const data = {
 
             'firstname': firstname,
@@ -31,15 +41,18 @@ export default function Create() {
         }).then(res => res.json())
             .then(json => {
                 console.log(json)
+                setloading(false)
                 if (json.error) {
                     seterror(json.error)
                 }
                 if (json.code == "created") {
-                    router.push('/')
+                    seterror(false)
+                    setemail('')
+                    setfirstname('')
+                    setlastname('')
+                    alert("Created!")
+                    router.push('/?created=true', { scroll: false })
                 }
-                setemail('')
-                setfirstname('')
-                setlastname('')
             })
 
 
@@ -71,7 +84,10 @@ export default function Create() {
                             value={email}
                             onChange={(e) => setemail(e.target.value)}
                             placeholder='Email' type="text" className="px-5 py-2 border rounded-xl" />
-                        <button type="submit" className='px-5 py-2 border rounded-xl bg-slate-950 text-slate-100'>Submit</button>
+
+                        <button disabled={loading} type="submit" className='px-5 py-2 border rounded-xl bg-slate-950 text-slate-100'>
+                            {loading ? 'Loading...' : 'Submit'}
+                        </button>
                     </div>
 
                 </form>

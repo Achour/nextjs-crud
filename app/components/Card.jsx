@@ -18,21 +18,27 @@ export default function Card({ user }) {
     const [update, setupdate] = useState(false)
 
     function handleClick(id) {
-        fetch(`/api/users/delete?id=${id}`).then(res => res.json()).then(json => {
-            const { error } = json;
-            if (error) {
-                alert(error)
-            } else {
-                alert(`${json.data.firstname} ${json.data.lastname} deleted!`)
-                router.push('/', { scroll: false })
-            }
-        })
+
+        fetch('/api/users', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 'id': id })
+        }).then(res => res.json())
+            .then(json => {
+                console.log(json)
+                const { error } = json;
+                if (error) {
+                    alert(error)
+                } else {
+                    alert(`${json.data.firstname} ${json.data.lastname} deleted!`)
+                    router.push(`/?deleted=${id}`, { scroll: false })
+                }
+            })
     }
 
     async function handleUpdate() {
-        user.firstname = newfirstname
-        user.lastname = newlastname
-        user.email = newemail
 
         const data = {
             'id': user.id,
@@ -48,10 +54,18 @@ export default function Card({ user }) {
             body: JSON.stringify({ data })
         }).then(res => res.json())
             .then(json => {
+                if (json.error) {
+                    alert(json.error)
+
+                } else {
+                    setupdate(false)
+                    user.firstname = newfirstname
+                    user.lastname = newlastname
+                    user.email = newemail
+                }
                 console.log(json)
             })
 
-        setupdate(false)
 
         //router.push('/', { scroll: false })
     }
