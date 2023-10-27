@@ -1,9 +1,7 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation';
-
-
 
 export default function Card({ user }) {
 
@@ -18,7 +16,7 @@ export default function Card({ user }) {
     const [update, setupdate] = useState(false)
 
     function handleClick(id) {
-
+        router.push(`?deleted=${id}`, { scroll: false })
         fetch('/api/users', {
             method: 'DELETE',
             headers: {
@@ -33,8 +31,10 @@ export default function Card({ user }) {
                     alert(error)
                 } else {
                     alert(`${json.data.firstname} ${json.data.lastname} deleted!`)
-                    router.push(`/?deleted=${id}`, { scroll: false })
+
                 }
+            }).finally(() => {
+                //
             })
     }
 
@@ -67,7 +67,6 @@ export default function Card({ user }) {
             })
 
 
-        //router.push('/', { scroll: false })
     }
 
     if (id == user.id && update == true) {
@@ -104,7 +103,7 @@ export default function Card({ user }) {
             <div>
                 <button onClick={() => {
                     setupdate(true)
-                    router.push(`/?id=${user.id}`, { scroll: false })
+                    router.push(`?id=${user.id}`, { scroll: false })
                 }} className='text-blue-600 me-3'>Update </button>
                 <button onClick={() => handleClick(user.id)} className='text-red-600'> Delete</button>
             </div>

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useUsersStore } from '../store/Users';
 
 export default function Create() {
 
@@ -14,12 +15,7 @@ export default function Create() {
 
     const [loading, setloading] = useState(false);
 
-
-    // useEffect(() => {
-
-    //     console.log('###############')
-
-    // }, [handleSubmit]);
+    const { addUser } = useUsersStore();
 
     async function handleSubmit(e) {
         e.preventDefault()
@@ -46,12 +42,13 @@ export default function Create() {
                     seterror(json.error)
                 }
                 if (json.code == "created") {
+                    addUser(json.data)
                     seterror(false)
                     setemail('')
                     setfirstname('')
                     setlastname('')
                     alert("Created!")
-                    router.push('/?created=true', { scroll: false })
+                    router.push(`?created=${json.data.id}`, { scroll: false })
                 }
             })
 

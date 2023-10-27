@@ -5,13 +5,14 @@ import { z } from "zod";
 const prisma = new PrismaClient();
 
 export async function GET(req) {
-  const users = await prisma.user.findMany();
+  const users = await prisma.user.findMany({
+    orderBy: [{ id: "desc" }],
+  });
 
   return NextResponse.json({ users });
 }
 
 export async function POST(req) {
-  //await new Promise((r) => setTimeout(r, 2000));
   const { data } = await req.json();
 
   const mySchema = z.object({
@@ -29,13 +30,13 @@ export async function POST(req) {
   }
 
   try {
-    await prisma.user.create({
+    const createUser = await prisma.user.create({
       data: data,
     });
     return NextResponse.json({
       code: "created",
       message: "successfully created",
-      data: data,
+      data: createUser,
     });
   } catch (e) {
     if (e.code == "P2002") {
